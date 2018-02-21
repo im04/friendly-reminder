@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>wx</title>
+</head>
+<body>
+<input id="input" type="text" />
+<button onclick="send()">Send</button>
+<span>当前会话对象<b id="us"></b></span>
+<pre id="output"></pre>
+<script src="/iris-ws.js"></script>
+<script>
+
+    function GetQueryString(name)
+    {
+        var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if(r!=null)return  unescape(r[2]); return null;
+    }
+    var scheme = document.location.protocol == "https:" ? "wss" : "ws";
+    var port = document.location.port ? (":" + document.location.port) : "";
+    // see app.Get("/echo", ws.Handler()) on main.go
+    var wsURL = scheme + "://" + document.location.hostname + port+"/connect/" + GetQueryString('userName');
+    var input = document.getElementById("input");
+    var output = document.getElementById("output");
+    // Ws comes from the auto-served '/iris-ws.js'
+    var socket = new Ws(wsURL);
+    console.log(socket.conn.setRequestHeader);
+    socket.OnConnect(function () {
+        output.innerHTML += "Status: Connected\n";
+    });
+    socket.OnDisconnect(function () {
+        output.innerHTML += "Status: Disconnected\n";
+    });
+    var User = null;
+    var userName = GetQueryString('userName');
+    // read events from the server
+    // socket.On("chat", function (msg) {
+    //     addMessage(msg)
+    // });
+    socket.OnMessage(function(msg) {
+        console.log(JSON.parse(msg));
+    });
+    function send() {
+        if (!User) return;
+        socket.EmitMessage('sendMsgToUser;'+ User + ';' + input.value);
+        addMsgToRoom(User, 'me：' + input.value);
+        // socket.Emit("chat", input.value);// send chat event data to the websocket server
+        input.value = ""; // clear the input
+    }
+    function addRoom(user) {
+        output.innerHTML += '<div id="node' + user + '" onclick="openSession(\'' + user + '\')">与' + user + '的会话</div>';
+    }
+    function addMsgToRoom(user, msg) {
+        var msgNode = document.createElement('DIV');
+        msgNode.style.marginLeft = '20px';
+        msgNode.innerHTML = msg;
+        document.getElementById('node'+ user).appendChild(msgNode)
+    }
+    function openSession(user) {
+        User = user;
+        us.innerHTML = User;
+    }
+    function startSession(name) {
+        socket.EmitMessage('startSession;' + name);
+        addRoom(name);
+    }
+</script>
+</body>
+</html>
