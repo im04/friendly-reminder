@@ -22,12 +22,10 @@ func getUserById (userId int) (*User, error){
 }
 
 func SendMsg(fromId int, toId int, msg Message) error {
-		fromUser,meErr := getUserById(fromId)
+		fromUser,_ := getUserById(fromId)
 		toUser,userErr :=  getUserById(toId)
 		str, jsonErr := json.Marshal(msg)
 		switch true {
-		case meErr != nil:
-			return errors.New("您的链接已断开")
 		case userErr != nil:
 			return userErr
 		case jsonErr != nil:

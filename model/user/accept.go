@@ -13,7 +13,6 @@ type AcceptReq struct {
 
 func AcceptApplication(user *AcceptReq) error {
 	db, err := manager.Open()
-	defer db.Close()
 	if err != nil {
 		fmt.Println(err)
 		return err

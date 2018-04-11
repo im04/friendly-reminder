@@ -13,7 +13,6 @@ type FriendRequestReq struct {
 
 func FriendRequestModel (user FriendRequestReq) error {
 	db, err := manager.Open()
-	defer db.Close()
 	if err != nil {
 		fmt.Println(err)
 		return err

@@ -9,16 +9,17 @@ import (
 
 func main() {
 	defer getPanic()
-	initIris();
-}
 
-func initIris() {
 	app := iris.New()
+
 	app.Configure(iris.WithConfiguration(iris.Configuration{
 		Charset: "UTF-8",
 	}))
+
 	app.Use(logger.New())
+
 	route.Route(app)
+
 	app.OnErrorCode(iris.StatusNotFound, func(ctx iris.Context) {
 		ctx.JSON(iris.Map{
 			"errNo" : 404,
@@ -26,6 +27,7 @@ func initIris() {
 			"data"  : iris.Map{},
 		})
 	})
+
 	app.OnErrorCode(iris.StatusInternalServerError, func(ctx iris.Context) {
 		ctx.JSON(iris.Map{
 			"errNo" : 1,
@@ -33,7 +35,8 @@ func initIris() {
 			"data"  : iris.Map{},
 		})
 	})
-	addr := iris.Addr(":10002")
+
+	addr := iris.Addr("192.168.0.127:10002")
 	app.Run(addr)
 }
 

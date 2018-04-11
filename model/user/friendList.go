@@ -19,7 +19,6 @@ type friendListRep struct {
 func GetFriendList(userId int) ([]friendListRep,[]friendListRep, error) {
 	fmt.Print(userId)
 	db, err := manager.Open()
-	defer db.Close()
 	if err != nil {
 		fmt.Println(err)
 		return nil, nil, err

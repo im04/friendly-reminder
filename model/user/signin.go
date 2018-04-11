@@ -26,13 +26,16 @@ type signinRep struct {
 
 func ModelSignin(user SigninReq) (*signinRep,error) {
 	db, err := manager.Open()
-	defer db.Close()
 	if err != nil {
 		fmt.Println(err)
 		return nil, err
 	}
 	row,err := db.Query("SELECT * FROM USER WHERE user_name=?",user.UserName)
-	defer row.Close()
+	defer func () {
+		if err == nil {
+			row.Close()
+		}
+	}()
 	if err != nil {
 		return nil, errors.New("用户查询错误")
 	}

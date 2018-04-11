@@ -21,7 +21,6 @@ type GetNoticeListRep struct {
 
 func IntserNotice (rep Notice) error {
 	db, err := manager.Open()
-	defer db.Close()
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -46,7 +45,6 @@ func GetNoticeList(userId int, listType int) ([]Notice, error) {
 		return nil, errors.New("listType参数错误")
 	}
 	db, err := manager.Open()
-	defer db.Close()
 	if err != nil {
 		fmt.Println(err)
 		return nil, err
